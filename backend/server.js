@@ -1,6 +1,6 @@
 // const http = require("node:http");
 const app = require("./app");
-const connectToDatabase = require("./databaseConfig/db");
+const connectToDatabase = require("./db-config/db");
 const port = process.env.PORT || 3000;
 // const server = http.createServer(app);
 
