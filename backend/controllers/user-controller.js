@@ -54,7 +54,9 @@ module.exports.loginUser = async (req, res, next) =>{
     throw new Error("Invalid credentials")
   }
   const token = await user.getJWT();
-  res.status(200).json({
+  res.status(200).cookie("swiftRideUserToken", token, {
+    expires : new Date(Date.now() + 8 *3600000)
+  }).json({
     status : "User login successfully",
     token : token,
     user : user
@@ -65,4 +67,11 @@ module.exports.loginUser = async (req, res, next) =>{
       message : `ERROR : ${err.message}`
   })
 }
+};
+
+module.exports.profile = (req, res)=>{
+  res.status(200).json({
+    status:"successfully",
+    user : req.user
+  })
 }

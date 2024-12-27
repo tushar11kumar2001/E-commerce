@@ -2,6 +2,8 @@ const express = require("express");
 const { body } = require("express-validator");
 const { registerUser } = require("../controllers/user-controller");
 const { loginUser } = require("../controllers/user-controller");
+const { profile } = require("../controllers/user-controller");
+const authMiddleware = require("../middlewares/auth-middleware");
 
 const userRouter = express.Router();
 
@@ -18,5 +20,7 @@ userRouter.post("/login", [
     body('password').isLength({ min : 6 }).withMessage("Password must be greater than 6 charachter")
 ],
 loginUser
-)
+);
+
+userRouter.get("/profile", authMiddleware, profile)
 module.exports = userRouter;
