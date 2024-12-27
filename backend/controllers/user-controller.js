@@ -33,3 +33,36 @@ module.exports.registerUser = async (req, res, next) => {
     });
   }
 };
+
+module.exports.loginUser = async (req, res, next) =>{
+  const errors = validationResult(req);
+  if(!errors.isEmpty()){
+    return res.status(400).json({
+      status:"Bad Request - Invalid input data ",
+      Error: errors.array(),
+    });
+  };
+
+ try{
+   const { emailId, password } = req.body;
+  const user = await UserModel.findOne({ emailId : emailId}).select("+password");
+  if(!user){
+   throw new Error("Invalid credentials")
+  };
+  const isPasswordValid = await user.comparePassword(password);
+  if(!isPasswordValid){
+    throw new Error("Invalid credentials")
+  }
+  const token = await user.getJWT();
+  res.status(200).json({
+    status : "User login successfully",
+    token : token,
+    user : user
+  });
+}catch(err){
+  return res.status(401).json({
+      status : "Failed",
+      message : `ERROR : ${err.message}`
+  })
+}
+}
