@@ -118,3 +118,77 @@ curl -X POST \
   }
 }
 ```
+
+## GET /user/profile
+
+Retrieve the profile of the authenticated user.
+
+### Description
+This endpoint allows authenticated users to retrieve their profile information.
+
+### Headers
+| Header          | Type   | Required | Description                    |
+|-----------------|--------|----------|--------------------------------|
+| Authorization   | string | Yes      | Bearer token for authentication|
+
+### Response Status Codes
+| Status Code | Description                                          |
+|-------------|------------------------------------------------------|
+| 200         | User profile retrieved successfully                  |
+| 401         | Unauthorized - Invalid or missing token              |
+| 500         | Internal Server Error                                |
+
+### Example Request
+```bash
+curl -X GET \
+  http://localhost:8000/user/profile \
+  -H 'Authorization: Bearer jwt_token'
+```
+
+### Success Response
+```json
+{
+  "status": "successfully",
+  "user": {
+    "id": "user_id",
+    "fullName": {
+      "firstName": "John",
+      "lastName": "Doe"
+    },
+    "emailId": "john.doe@example.com"
+  }
+}
+```
+
+## GET /user/logout
+
+Logout the authenticated user.
+
+### Description
+This endpoint allows authenticated users to logout by invalidating their token.
+
+### Headers
+| Header          | Type   | Required | Description                    |
+|-----------------|--------|----------|--------------------------------|
+| Authorization   | string | Yes      | Bearer token for authentication|
+
+### Response Status Codes
+| Status Code | Description                                          |
+|-------------|------------------------------------------------------|
+| 200         | User logged out successfully                         |
+| 401         | Unauthorized - Invalid or missing token              |
+| 500         | Internal Server Error                                |
+
+### Example Request
+```bash
+curl -X GET \
+  http://localhost:8000/user/logout \
+  -H 'Authorization: Bearer jwt_token'
+```
+
+### Success Response
+```json
+{
+  "message": "Logout successfully"
+}
+```
