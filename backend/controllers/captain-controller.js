@@ -93,9 +93,9 @@ module.exports.getProfile = (req, res) => {
 
 module.exports.logoutCaptain = async (req, res) => {
     try {
-        res.clearCookie("token");
         const token = req.cookies.token || req.headers.authorization?.split(" ")[1];
         await BlacklistTokenModel.create({ token: token });
+        res.clearCookie("token");
         res.status(200).json({
             status: "Successfully logged out",
             message: "Successfully logged out",
