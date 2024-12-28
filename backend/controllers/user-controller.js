@@ -63,7 +63,7 @@ module.exports.loginUser = async (req, res, next) =>{
   }
   const token = await user.getJWT();
   res.status(200).cookie("token", token, {
-    expires : new Date(Date.now() + 8 *3600000)
+    expires : new Date(Date.now() + 24 * 60 * 60 * 1000)
   }).json({
     status : "User login successfully",
     token : token,
@@ -79,7 +79,7 @@ module.exports.loginUser = async (req, res, next) =>{
 
 module.exports.getProfile = (req, res)=>{
   res.status(200).json({
-    status:"successfully",
+    status: req.user? "Successfully" : "Unauthorized",
     user : req.user
   })
 };
