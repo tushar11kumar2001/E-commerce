@@ -1,4 +1,5 @@
 const UserModel = require("../models/user-schema");
+const BlacklistTokenModel = require("../models/blacklistToken-schema");
 const { createUser } = require("../services/user-service");
 const { validationResult } = require("express-validator");
 
@@ -54,7 +55,7 @@ module.exports.loginUser = async (req, res, next) =>{
     throw new Error("Invalid credentials")
   }
   const token = await user.getJWT();
-  res.status(200).cookie("swiftRideUserToken", token, {
+  res.status(200).cookie("token", token, {
     expires : new Date(Date.now() + 8 *3600000)
   }).json({
     status : "User login successfully",
@@ -69,9 +70,20 @@ module.exports.loginUser = async (req, res, next) =>{
 }
 };
 
-module.exports.profile = (req, res)=>{
+module.exports.getProfile = (req, res)=>{
   res.status(200).json({
     status:"successfully",
     user : req.user
   })
+};
+
+module.exports.logoutUser = async (req, res)=>{
+res.clearCookie("token");
+const token = req.cookies.token || req.headers.authorization?.split(" ")[1];
+await BlacklistTokenModel.create({
+  token : token
+});
+res.status(200).json({
+  message : "Logout successfully "
+})
 }

@@ -2,7 +2,8 @@ const express = require("express");
 const { body } = require("express-validator");
 const { registerUser } = require("../controllers/user-controller");
 const { loginUser } = require("../controllers/user-controller");
-const { profile } = require("../controllers/user-controller");
+const { getProfile } = require("../controllers/user-controller");
+const { logoutUser } = require("../controllers/user-controller");
 const authMiddleware = require("../middlewares/auth-middleware");
 
 const userRouter = express.Router();
@@ -22,5 +23,7 @@ userRouter.post("/login", [
 loginUser
 );
 
-userRouter.get("/profile", authMiddleware, profile)
+userRouter.get("/profile", authMiddleware, getProfile);
+
+userRouter.get("/logout", authMiddleware, logoutUser); 
 module.exports = userRouter;

@@ -1,15 +1,23 @@
 const jwt = require("jsonwebtoken");
 const UserModel = require("../models/user-schema");
+const BlacklistTokenModel = require("../models/blacklistToken-schema");
 
 
 const authMiddleware = async (req, res, next)=>{
-      const token = req.cookies.swiftRideUserToken || req.headers.authorization?.split(" ")[1];
+      const token = req.cookies.token || req.headers.authorization?.split(" ")[1];
       if(!token){
         return res.status(401).json({
             message : "Unauthorized"
         })
       };
 
+      const isBlackListedToken = await BlacklistTokenModel.findOne({ token : token});
+      if(isBlackListedToken){
+        return res.status(401).json({
+          message : "Unauthorized"
+      })
+      };
+      
       try{
          const decodeMessage = await jwt.verify(token, process.env.JWT_SECRET_KEY);
          const { _id }  = decodeMessage;
