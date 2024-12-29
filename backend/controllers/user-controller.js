@@ -12,6 +12,8 @@ module.exports.registerUser = async (req, res, next) => {
     });
   }
   try {
+    // console.log("request is coming from frontend", req.body);
+    
     const { fullName, emailId, password } = req.body;
     const existingUser = await UserModel.findOne({ emailId });
     if (existingUser) {
@@ -79,18 +81,29 @@ module.exports.loginUser = async (req, res, next) =>{
 
 module.exports.getProfile = (req, res)=>{
   res.status(200).json({
-    status: req.user? "Successfully" : "Unauthorized",
+    status:  "Successfully",
     user : req.user
   })
 };
 
 module.exports.logoutUser = async (req, res)=>{
-const token = req.cookies.token || req.headers.authorization?.split(" ")[1];
-await BlacklistTokenModel.create({
-  token : token
-});
-res.clearCookie("token");
-res.status(200).json({
-  message : "Logout successfully "
-})
+  try{
+    const token = req.cookies?.token || req.headers.authorization?.split(" ")[1];
+    const newEntry = await BlacklistTokenModel.create({
+      token : token
+    });
+    
+    if(!newEntry){
+      throw new Error("Failed to logout")
+    }
+    res.clearCookie("token");
+    res.status(200).json({
+      message : "Logout successfully "
+    })
+    
+  }catch(err){
+    res.status(500).json({
+      message : `CRAZY ERROR ${err.message}`
+    })
+  }
 }

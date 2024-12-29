@@ -1,29 +1,40 @@
-import { useState } from "react";
-import { Link } from "react-router-dom"
-
+import { useContext, useState } from "react";
+import { Link, useNavigate } from "react-router-dom"
+import axios from "axios";
+import { UserContext } from "../context/UserContext";
 const UserSignup = () => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [emailId, setEmailId] = useState("");
   const [password, setPassword] = useState("");
-  const [userData, setUserData] = useState({});
-  const formHandler = (e) => {
-    setUserData({
-      fullName:{
+  const navigate = useNavigate();
+  const {userData, setUserData} = useContext(UserContext);
+  
+  const formHandler = async(e) => {
+    e.preventDefault();
+    const newUser = {
+      fullName: {
         firstName: firstName,
         lastName: lastName
       },
       emailId: emailId,
       password: password
-    });
-    console.log(userData);
+    };
+    const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/user/register`, newUser);
+    if(response.status === 201){      
+      const { user, token } = response.data;
+      localStorage.setItem('token', JSON.stringify(token));
+
+      setUserData(user);
+      navigate("/home ");
+    }
     setEmailId("");
     setPassword("");
     setFirstName("");
     setLastName("");
     
-    e.preventDefault();
   };
+  
   return (
     <div className="p-7 pb-10 flex flex-col justify-between h-screen">
       <div>
@@ -67,7 +78,7 @@ const UserSignup = () => {
 
           <button
             className="bg-[#111] text-white font-semibold mb-7 rounded px-4 py-2 w-full text-lg placeholder:text-base "
-          >Sign Up</button>
+          >Create account</button>
         </form>
         <p className="text-center">Already have an account? <Link to="/login" className="text-blue-500">Login here</Link></p>
       </div>

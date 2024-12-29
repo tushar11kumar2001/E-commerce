@@ -8,9 +8,9 @@ module.exports.createCaptain = async ({
     color,
     plate,
     capacity,
-    vechicleType
+    type
 }) => {
-    if(!firstName  || !emailId || !password || !color || !plate || !capacity || !vechicleType){
+    if(!firstName  || !emailId || !password || !color || !plate || !capacity || !type){
         throw new Error("All fields are required");
     }
     const captain = await CaptainModel.create({
@@ -24,7 +24,7 @@ module.exports.createCaptain = async ({
             color,
             plate,
             capacity,
-            vechicleType,
+            type,
         },
     });
 

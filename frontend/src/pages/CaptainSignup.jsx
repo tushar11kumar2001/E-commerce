@@ -1,5 +1,7 @@
-import { useState } from "react";
-import { Link } from "react-router-dom"
+import axios from "axios";
+import { useContext, useState } from "react";
+import { Link, useNavigate } from "react-router-dom"
+import { CaptainContext } from "../context/CaptainContext";
 
 const CaptainSignup = () => {
   const [firstName, setFirstName] = useState("");
@@ -10,23 +12,33 @@ const CaptainSignup = () => {
   const [vehicleNumber, setVehicleNumber] = useState("");
   const [vehicleCapacity, setVehicleCapacity] = useState("");
   const [vehicleType, setVehicleType] = useState("");
-  const [captainData, setCaptainData] = useState({});
-  const formHandler = (e) => {
+  const navigate = useNavigate();
+  const { captainData, setCaptainData } = useContext(CaptainContext);
+  const formHandler = async (e) => {
     e.preventDefault();
-    setCaptainData({
+    const newCaptainData = {
       fullName: {
         firstName: firstName,
         lastName: lastName
       },
       emailId: emailId,
       password: password,
-      vehicle :{
+      vechicle :{
         color: color,
         plate: vehicleNumber,
         capacity: vehicleCapacity,
-        vehicleType
+        type: vehicleType
       }
-    });
+    };
+    const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/captain/register`, newCaptainData);
+    if(response.status === 201){
+      const { captain, token } = response.data;
+      localStorage.setItem('token', JSON.stringify(token));
+      setCaptainData(captain);
+      navigate("/captain-home")
+    }
+    console.log(response);
+    
     setEmailId("");
     setPassword("");
     setFirstName("");
@@ -107,19 +119,24 @@ const CaptainSignup = () => {
               type="number"
               placeholder="capacity e.g 2,3,4"
               required />
-            <input
-              className="bg-[#eeeeee] mb-7 rounded w-1/2 px-4 py-2 border  text-lg placeholder:text-base outline-black "
-              value={vehicleType}
-              onChange={(e) => setVehicleType(e.target.value)}
-              type="text"
-              placeholder="Type"
-              required />
+            <select
+             className="bg-[#eeeeee] mb-7 rounded w-1/2 px-4 py-2 border  text-lg placeholder:text-base outline-black "
+             required
+             value={vehicleType}
+             onChange={(e) => setVehicleType(e.target.value)}
+            >
+             <option value="" disabled>Select</option>
+             <option value="car">Car</option>
+             <option value="auto">Auto</option>
+             <option value="bike">Bike</option>
+
+            </select>
            </div>
            
           </div>
           <button
             className="bg-[#111] text-white font-semibold mb-7 rounded px-4 py-2 w-full text-lg placeholder:text-base "
-          >Sign Up</button>
+          >Create captain account</button>
         </form>
         <p className="text-center">Already have an account? <Link to="/captain-login" className="text-blue-500">Login here</Link></p>
       </div>

@@ -30,7 +30,7 @@ module.exports.registerCaptain = async (req, res, next) => {
         color: vechicle.color,
         plate: vechicle.plate,
         capacity: vechicle.capacity,
-        vechicleType: vechicle.vechicleType,
+        type: vechicle.type,
         });
         const token = await captain.getJWT();
         res.status(201).json({
@@ -86,7 +86,7 @@ module.exports.loginCaptain = async (req, res, next) => {
 
 module.exports.getProfile = (req, res) => {
     res.status(200).json({
-        status: req.captain ? "Successfully" : "Unauthorized",
+        status:  "Successfully",
         captain: req.captain,
     });
 };
